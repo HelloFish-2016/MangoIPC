@@ -26,5 +26,5 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.+'
     androidTestImplementation 'junit:junit:4.12'
-    implementation project(':ipcore')
+    implementation 'com.github.Mangosir:MangoIPC:1.0.0'
 }

@@ -16,7 +16,12 @@
 
     <TextView
         android:onClick="sendData"
-        android:text="与服务端进行通信"
+        android:text="与RemoteService进行通信"
+        style="@style/tv_data"/>
+
+    <TextView
+        android:onClick="sendMyData"
+        android:text="与自定义Service进行通信"
         style="@style/tv_data"/>
 
     <TextView

@@ -2,7 +2,6 @@ package com.mango.client;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,13 +34,10 @@ public class MainActivity extends Activity {
 
     public void sendData(View v){
         //如果服务端会执行耗时操作，这里需要放在子线程
-        Log.e("MainActivity","sendData="+Thread.currentThread().getName());
-        //发送请求给框架提供的通用远程Service
+        //发送请求给框架提供的RemoteService
         if (iData == null) {
             iData = IPCMango.getDefault()
-                        .loadRequestHandler(mRemoteServiceName,
-                                    IData.class,
-                                    "伙计");
+                        .loadRequestHandler(mRemoteServiceName,IData.class,"伙计");
         }
         if (iData != null) {
             List list = iData.sendData("小米");
@@ -49,15 +45,13 @@ public class MainActivity extends Activity {
             hint.setText("");
             hint.append("list="+list+"\n");
             hint.append("student="+student+"\n");
-        } else {
-            hint.setText("");
-            hint.append("iData="+iData+"\n");
         }
+    }
 
+    public void sendMyData(View view){
         //发送请求给服务端自定义的远程Service
         IPCResponse ipcResponse = IPCMango.getDefault().sendRequest(new IPCRequest(), mRemoteServiceName2);
         hint.append("ipcResponse="+ipcResponse+"\n");
-
     }
 
     @Override
