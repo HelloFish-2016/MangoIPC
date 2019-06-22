@@ -1,6 +1,12 @@
 # MangoIPC
 
-一个简单可靠的基于Android应用的跨进程通信框架，可使用框架提供的RemoteService作为服务端，也可自定义Service，使用简单
+你还在为了Android应用进程间通信发愁吗？
+还在为了怎么编写AIDL文件而烦吗？
+还在为了定义各种各样的方法及参数返回值对象心塞吗？
+还在为了数据传输的序列化和反序列化挠头吗？
+还在为了定义各种各样的Service闹心吗？
+
+一个简单可靠的基于Android应用的跨进程通信框架在这里，可使用框架提供的RemoteService作为服务端，也可自定义Service，使用简单，与业务解耦
 
 <font size=5 color=Crimson>Step 1</font>
 
@@ -28,8 +34,8 @@
 
 服务端自定义Service，客户端先绑定服务，再发送请求
 
-服务端：java
-```
+服务端：
+```java
 public class MyRemoteService extends Service {
 
     @Nullable
@@ -66,6 +72,11 @@ public class MyRemoteService extends Service {
                 IPCMango.getDefault().buildRequest(0,null,null), 
                 mRemoteServiceName);
         }
+
+		public void onDestory(){
+            super.onDestory();
+            IPCMango.getDefault().unBind(this,mRemoteServiceName);
+		}
 
 ```
 
