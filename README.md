@@ -17,15 +17,62 @@
 * 如果服务端和客户端在一个模块，在模块下的build.gradle中添加
     ```xml
     dependencies {
-        implementation 'com.github.Mangosir:MangoIPC:1.0.1'
+        implementation 'com.github.Mangosir:MangoIPC:1.0.0'
     }
     ```
     
+
   如果服务端和客户端不在同一个模块，那在各自的build.gradle中都得加上
 
 <font size=5 color=Crimson>Step 2</font>
 
-如果使用RemoteService作为服务端，需要实现第二步和第三步；如果使用自定义Service，直接跳到第四步
+服务端自定义Service，客户端先绑定服务，再发送请求
+
+服务端：java
+```
+public class MyRemoteService extends Service {
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new IRemoteService.Stub(){
+
+            @Override
+            public IPCResponse sendRequest(IPCRequest request) throws RemoteException {
+
+                return new IPCResponse("hello","执行方法成功",true);
+            }
+        };
+    }
+}
+```
+
+客户端：
+
+```java
+        private String mRemotePackageName = "com.mango.ipc";
+        private String mRemoteServiceName = "com.mango.ipc.MyRemoteService";
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            IPCMango.getDefault().bind(this,mRemotePackageName,mRemoteServiceName);
+
+        }
+    
+        public void sendMyData(View view){
+            //发送请求给服务端自定义的远程Service
+            IPCResponse ipcResponse = IPCMango.getDefault().sendRequest(
+                IPCMango.getDefault().buildRequest(0,null,null), 
+                mRemoteServiceName);
+        }
+
+```
+
+<font size=5 color=Crimson>Step 3</font>
+
+上面两步做完你就可以完成进程间通信了
+当然你也可以使用框架提供的RemoteService，更加通用，使得业务与Service解耦，面向接口编程
 
 服务端：
 * 定义一个业务接口，规定与客户端通信规则，比如
@@ -81,7 +128,7 @@
                 android:exported="true"></service>
     ```
 
-<font size=5 color=Crimson>Step 3</font>
+
 
 客户端：
 
@@ -91,12 +138,12 @@
     private String mRemotePackageName = "com.mango.ipc";
     IPCMango.getDefault().bind(this,mRemotePackageName);
     ```
-   在Activity销毁时解绑Service
+      在Activity销毁时解绑Service
     ```java
     IPCMango.getDefault().unBind(this);
     ```
 * 新建一个接口，名字不需要与服务端接口一样，要求接口中的方法必须与其一致，包括注解值
-    ```java
+    ```
     @RequestHandler("IData")
     public interface IData {
 
@@ -123,47 +170,3 @@
     ```
     
 
-<font size=5 color=Crimson>Step 4</font>
-
-如果不使用RemoteService，可以在服务端自定义Service，那就先绑定服务，再发送请求
-
-服务端：
-```java
-public class MyRemoteService extends Service {
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return new IRemoteService.Stub(){
-
-            @Override
-            public IPCResponse sendRequest(IPCRequest request) throws RemoteException {
-
-                return new IPCResponse("hello","执行方法成功",true);
-            }
-        };
-    }
-}
-```
-
-客户端：
-
-```java
-        private String mRemotePackageName = "com.mango.ipc";
-        private String mRemoteServiceName = "com.mango.ipc.MyRemoteService";
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-            IPCMango.getDefault().bind(this,mRemotePackageName,mRemoteServiceName);
-
-        }
-    
-        public void sendMyData(View view){
-            //发送请求给服务端自定义的远程Service
-            IPCResponse ipcResponse = IPCMango.getDefault().sendRequest(
-                IPCMango.getDefault().buildRequest(0,null,null), 
-                mRemoteServiceName);
-        }
-
-```
