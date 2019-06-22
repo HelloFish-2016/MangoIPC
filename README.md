@@ -73,7 +73,11 @@
     ```java
     IPCMango.getDefault().unRegister(DataManager.class);
     ```
-    
+* 在AndroidManifest中注册RemoteService
+```xml
+<service android:name="com.mango.ipcore.handler.RemoteService"
+            android:exported="true"></service>
+```
 
 <font size=5 color=Crimson>Step 3</font>
 
@@ -81,11 +85,11 @@
 
 * 在Activity的onCreate中绑定远程Service
     ```java
-    //服务端应用包名
+    //服务端应用的包名
     private String mRemotePackageName = "com.mango.ipc";
     IPCMango.getDefault().bind(this,mRemotePackageName);
     ```
-* 在Activity销毁时解绑Service
+   在Activity销毁时解绑Service
     ```java
     IPCMango.getDefault().unBind(this);
     ```
@@ -104,7 +108,7 @@
     ```java
         public void sendData(View v){
             //如果服务端会执行耗时操作，这里需要放在子线程
-            //发送请求给框架提供的通用远程Service
+            //发送请求给框架提供的RemoteService
             if (iData == null) {
                 iData = IPCMango.getDefault()
                             .loadRequestHandler(IData.class,"伙计");
@@ -115,4 +119,49 @@
             } 
         }
     ```
+    
 
+<font size=5 color=Crimson>Step 4</font>
+
+如果不使用RemoteService，可以在服务端自定义Service，那就先绑定服务，再发送请求
+
+服务端：java
+```
+public class MyRemoteService extends Service {
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new IRemoteService.Stub(){
+
+            @Override
+            public IPCResponse sendRequest(IPCRequest request) throws RemoteException {
+
+                return new IPCResponse("hello","执行方法成功",true);
+            }
+        };
+    }
+}
+```
+
+客户端：
+
+```java
+        private String mRemotePackageName = "com.mango.ipc";
+        private String mRemoteServiceName = "com.mango.ipc.MyRemoteService";
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            IPCMango.getDefault().bind(this,mRemotePackageName,mRemoteServiceName);
+
+        }
+    
+        public void sendMyData(View view){
+            //发送请求给服务端自定义的远程Service
+            IPCResponse ipcResponse = IPCMango.getDefault().sendRequest(
+                IPCMango.getDefault().buildRequest(0,null,null), 
+                mRemoteServiceName);
+        }
+
+```

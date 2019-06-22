@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.mango.ipcore.IPCMango;
-import com.mango.ipcore.IPCRequest;
 import com.mango.ipcore.IPCResponse;
 
 import java.util.List;
@@ -18,8 +17,7 @@ public class MainActivity extends Activity {
      * 远程服务的包名和类名
      */
     private String mRemotePackageName = "com.mango.ipc";
-    private String mRemoteServiceName = "com.mango.ipcore.handler.RemoteService";
-    private String mRemoteServiceName2 = "com.mango.ipc.MyRemoteService";
+    private String mRemoteServiceName = "com.mango.ipc.MyRemoteService";
 
     private TextView hint;
 
@@ -27,8 +25,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        IPCMango.getDefault().bind(this,mRemotePackageName);
         IPCMango.getDefault().bind(this,mRemotePackageName,mRemoteServiceName);
-        IPCMango.getDefault().bind(this,mRemotePackageName,mRemoteServiceName2);
         hint = (TextView) findViewById(R.id.hint);
     }
 
@@ -37,7 +35,7 @@ public class MainActivity extends Activity {
         //发送请求给框架提供的RemoteService
         if (iData == null) {
             iData = IPCMango.getDefault()
-                        .loadRequestHandler(mRemoteServiceName,IData.class,"伙计");
+                        .loadRequestHandler(IData.class,"伙计");
         }
         if (iData != null) {
             List list = iData.sendData("小米");
@@ -50,15 +48,17 @@ public class MainActivity extends Activity {
 
     public void sendMyData(View view){
         //发送请求给服务端自定义的远程Service
-        IPCResponse ipcResponse = IPCMango.getDefault().sendRequest(new IPCRequest(), mRemoteServiceName2);
+        IPCResponse ipcResponse = IPCMango.getDefault().sendRequest(
+                IPCMango.getDefault().buildRequest(0,null,null),
+                mRemoteServiceName);
         hint.append("ipcResponse="+ipcResponse+"\n");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        IPCMango.getDefault().unBind(this);
         IPCMango.getDefault().unBind(this,mRemoteServiceName);
-        IPCMango.getDefault().unBind(this,mRemoteServiceName2);
     }
 
 }
