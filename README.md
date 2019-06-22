@@ -1,6 +1,6 @@
 # MangoIPC
 
-基于Android应用的跨进程通信框架
+一个简单可靠的基于Android应用的跨进程通信框架，可使用框架提供的RemoteService作为服务端，也可自定义Service，使用简单
 
 <font size=5 color=Crimson>Step 1</font>
 
@@ -24,6 +24,8 @@
   如果服务端和客户端不在同一个模块，那在各自的build.gradle中都得加上
 
 <font size=5 color=Crimson>Step 2</font>
+
+如果使用RemoteService作为服务端，需要实现第二步和第三步；如果使用自定义Service，直接跳到第四步
 
 服务端：
 * 定义一个业务接口，规定与客户端通信规则，比如
