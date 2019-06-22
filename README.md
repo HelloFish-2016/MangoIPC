@@ -17,7 +17,7 @@
 * 如果服务端和客户端在一个模块，在模块下的build.gradle中添加
     ```xml
     dependencies {
-        implementation 'com.github.Mangosir:MangoIPC:1.0.0'
+        implementation 'com.github.Mangosir:MangoIPC:1.0.1'
     }
     ```
     
