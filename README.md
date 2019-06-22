@@ -76,10 +76,10 @@
     IPCMango.getDefault().unRegister(DataManager.class);
     ```
 * 在AndroidManifest中注册RemoteService
-```xml
-<service android:name="com.mango.ipcore.handler.RemoteService"
-            android:exported="true"></service>
-```
+    ```xml
+    <service android:name="com.mango.ipcore.handler.RemoteService"
+                android:exported="true"></service>
+    ```
 
 <font size=5 color=Crimson>Step 3</font>
 
@@ -96,7 +96,7 @@
     IPCMango.getDefault().unBind(this);
     ```
 * 新建一个接口，名字不需要与服务端接口一样，要求接口中的方法必须与其一致，包括注解值
-    ```
+    ```java
     @RequestHandler("IData")
     public interface IData {
 
@@ -127,8 +127,8 @@
 
 如果不使用RemoteService，可以在服务端自定义Service，那就先绑定服务，再发送请求
 
-服务端：java
-```
+服务端：
+```java
 public class MyRemoteService extends Service {
 
     @Nullable
