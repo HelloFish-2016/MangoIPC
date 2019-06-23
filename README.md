@@ -77,10 +77,10 @@ public class MyRemoteService extends Service {
                 mRemoteServiceName);
         }
 
-		public void onDestory(){
+	public void onDestory(){
             super.onDestory();
             IPCMango.getDefault().unBind(this,mRemoteServiceName);
-		}
+	}
 
 ```
 
