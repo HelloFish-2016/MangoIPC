@@ -9,7 +9,7 @@ import java.util.Arrays;
  * Author: mango
  * Time: 2019/6/12 20:45
  * Version:
- * Desc: TODO()
+ * Desc: TODO(封装请求信息)
  */
 public class IPCRequest implements Parcelable {
 
@@ -23,7 +23,7 @@ public class IPCRequest implements Parcelable {
     private String className;
     //服务端处理请求的方法名
     private String methodName;
-    //服务端处理请求方法的参数
+    //服务端处理请求的方法的参数
     private IPCParameter[] parameters;
 
     public IPCRequest() {}

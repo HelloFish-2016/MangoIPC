@@ -3,7 +3,6 @@ package com.mango.ipcore.handler;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.RemoteException;
 
 import com.mango.ipcore.IPCCache;
 import com.mango.ipcore.IPCRequest;
@@ -47,28 +46,29 @@ public class RemoteService extends Service {
         return new IRemoteService.Stub(){
 
             @Override
-            public IPCResponse sendRequest(IPCRequest request) throws RemoteException {
+            public IPCResponse sendRequest(IPCRequest request) {
                 mLock.lock();
-                executed(request);
-                switch (request.getType()) {
+                IPCRequest rq = request;
+                executed(rq);
+                switch (rq.getType()) {
                     case LOAD_INSTANCE:
                         try {
                             /**
                              * 找到对应的处理客户端请求的Class和构造方法
                              * 然后通过反射实例化对象 保存起来
                              */
-                            Class<?> clazz = mIpcCache.getClass(request.getClassName());
-                            Method method = mIpcCache.getMethod(clazz, request.getMethodName());
-                            if (mIpcCache.getObject(request.getClassName())  == null) {
-                                Object object = method.invoke(null, ParamsConvert.unSerializationParams(request.getParameters()));
-                                mIpcCache.putObject(request.getClassName(),object);
+                            Class<?> clazz = mIpcCache.getClass(rq.getClassName());
+                            Method method = mIpcCache.getMethod(clazz, rq.getMethodName());
+                            if (mIpcCache.getObject(rq.getClassName())  == null) {
+                                Object object = method.invoke(null, ParamsConvert.unSerializationParams(rq.getParameters()));
+                                mIpcCache.putObject(rq.getClassName(),object);
                             }
                             return new IPCResponse(null,"初始化处理对象成功",true);
                         } catch (Exception e) {
                             e.printStackTrace();
                             return new IPCResponse(e.getMessage(),"初始化处理对象失败",false);
                         }finally {
-                            finished(request);
+                            finished(rq);
                             mLock.unlock();
                         }
                     case LOAD_METHOD:
@@ -76,11 +76,11 @@ public class RemoteService extends Service {
                             /**
                              * 找到对应的处理客户端请求的Class和执行请求的方法
                              */
-                            Class<?> cl = mIpcCache.getClass(request.getClassName());
-                            Method me = mIpcCache.getMethod(cl, request.getMethodName());
-                            Object object = mIpcCache.getObject(request.getClassName());
+                            Class<?> cl = mIpcCache.getClass(rq.getClassName());
+                            Method me = mIpcCache.getMethod(cl, rq.getMethodName());
+                            Object object = mIpcCache.getObject(rq.getClassName());
 
-                            Object[] params = ParamsConvert.unSerializationParams(request.getParameters());
+                            Object[] params = ParamsConvert.unSerializationParams(rq.getParameters());
                             Object result = me.invoke(object, params);
                             String r = ParamsConvert.mGson.toJson(result);
                             return new IPCResponse(r,"执行方法成功",true);
@@ -88,7 +88,7 @@ public class RemoteService extends Service {
                             e.printStackTrace();
                             return new IPCResponse(e.getMessage(),"执行方法失败",false);
                         }finally {
-                            finished(request);
+                            finished(rq);
                             mLock.unlock();
                         }
                     default:

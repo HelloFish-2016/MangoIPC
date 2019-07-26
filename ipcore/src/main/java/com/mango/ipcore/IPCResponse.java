@@ -7,11 +7,11 @@ import android.os.Parcelable;
  * Author: mango
  * Time: 2019/6/12 20:45
  * Version:
- * Desc: TODO()
+ * Desc: TODO(执行结果封装)
  */
 public class IPCResponse implements Parcelable {
 
-    //方法返回结果
+    //方法返回值序列化的结果
     private String result;
     //本次请求执行情况的描述信息
     private String message;

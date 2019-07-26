@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         IPCMango.getDefault().bind(this,mRemotePackageName);
         IPCMango.getDefault().bind(this,mRemotePackageName,mRemoteServiceName);
-        hint = (TextView) findViewById(R.id.hint);
+        hint = findViewById(R.id.hint);
     }
 
     public void sendData(View v){
