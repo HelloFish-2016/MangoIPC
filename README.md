@@ -1,5 +1,7 @@
 # MangoIPC
 
+> 博客描述 ：https://blog.csdn.net/qq_30993595/article/details/91467494
+
 你还在为了Android应用进程间通信发愁吗？
 
 还在为了怎么编写AIDL文件而烦吗？
